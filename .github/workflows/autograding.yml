@@ -1,0 +1,32 @@
+name: Linux File Permission Autograding
+
+on:
+push:
+pull_request:
+
+jobs:
+autograde:
+runs-on: ubuntu-latest
+
+steps:
+  - name: Checkout student repository
+    uses: actions/checkout@v4
+
+  - name: Make scripts executable
+    run: |
+      chmod +x starter/permission_task.sh
+      chmod +x tests/test_permissions.sh
+
+  - name: Reset test file permissions
+    run: |
+      chmod 666 starter/test_files/numeric.txt
+      chmod 666 starter/test_files/symbolic.txt
+      chmod 666 starter/test_files/conditions.txt
+
+  - name: Run student program
+    run: |
+      ./starter/permission_task.sh
+
+  - name: Run autograder
+    run: |
+      ./tests/test_permissions.sh
