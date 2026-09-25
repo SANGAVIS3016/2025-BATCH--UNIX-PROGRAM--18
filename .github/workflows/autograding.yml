@@ -2,6 +2,8 @@ name: Linux File Permission Autograding
 
 on:
 push:
+branches:
+- main
 pull_request:
 
 jobs:
@@ -9,24 +11,36 @@ autograde:
 runs-on: ubuntu-latest
 
 steps:
-  - name: Checkout student repository
+  - name: Checkout repository
     uses: actions/checkout@v4
 
-  - name: Make scripts executable
+  - name: Check required files
     run: |
-      chmod +x starter/permission_task.sh
-      chmod +x tests/test_permissions.sh
+      echo "Checking assignment files..."
 
-  - name: Reset test file permissions
+      test -f starter/permission_task.sh
+      test -f starter/test_files/numeric.txt
+      test -f starter/test_files/symbolic.txt
+      test -f starter/test_files/conditions.txt
+      test -f tests/test_permissions.sh
+
+      echo "All required files are present."
+
+  - name: Prepare test files
     run: |
       chmod 666 starter/test_files/numeric.txt
       chmod 666 starter/test_files/symbolic.txt
       chmod 666 starter/test_files/conditions.txt
 
+  - name: Make student script executable
+    run: |
+      chmod +x starter/permission_task.sh
+
   - name: Run student program
     run: |
       ./starter/permission_task.sh
 
-  - name: Run autograder
+  - name: Run autograding tests
     run: |
+      chmod +x tests/test_permissions.sh
       ./tests/test_permissions.sh
